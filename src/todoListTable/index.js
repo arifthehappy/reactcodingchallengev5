@@ -12,40 +12,39 @@ const List = () => {
 
   const dispatch = useDispatch();
 
-  // Use the useEffect hook to call the API and get the todos
-  useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/todos")
-      .then((response) => response.json())
-      .then((json) => {
-        setTodos(json);
-      });
-  }, []);
-
-  let data = {
-    ToDo_ID: "",
-    ToDo_Title: "",
-    User_Id: "",
+  //async function to get todos
+  const getTodos = async () => {
+    const response = await axios.get(
+      "https://jsonplaceholder.typicode.com/todos"
+    );
+    setTodos(response.data);
   };
 
+  useEffect(() => {
+    getTodos();
+  }, []);
+
+  //   let data = {
+  //     ToDo_ID: "",
+  //     ToDo_Title: "",
+  //     User_Id: "",
+  //   };
+
   //view user button click
-  const buttonClick = (id) => {
-    axios({
-      method: "get",
-      url: `https://jsonplaceholder.typicode.com/todos/${id}`,
-    })
-      .then((response) => {
-        dispatch(
-          storeUser({
-            selectedUser: response.data.userId,
-            todoID: response.data.id,
-            todoTitle: response.data.title,
-          })
-        );
-        //console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const buttonClick = async (id) => {
+    //fiter todo by id
+    const todo = await todos.filter((todo) => todo.id === id);
+    console.log(todo, "todo");
+
+    setTimeout(() => {
+      dispatch(
+        storeUser({
+          todoID: todo.id,
+          todoTitle: todo.title,
+          selectedUser: todo.userId,
+        })
+      );
+    }, 1000);
   };
 
   //function to render the action column
